@@ -196,5 +196,5 @@ if (erase) {
 }
 
 if (palette) {
-  palette.addEventListener("blur", changeColorByPalette);
+  palette.addEventListener("click", changeColorByPalette);
 }
