@@ -28,6 +28,7 @@ stopPainting = () => {
   painting = false;
 };
 
+
 onMouseMove = e => {
   console.log(e);
   const x = e.offsetX;
@@ -45,6 +46,42 @@ startPainting = () => {
   painting = true;
 };
 
+function handleStart(evt) {
+  console.log(evt);
+  evt.preventDefault();
+
+  if(filling){
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    background = ctx.fillStyle;
+  }else {
+      ctx.beginPath();
+      painting = true;
+    }
+};
+
+function handleEnd(evt) {
+  evt.preventDefault();
+  console.log(evt);
+  ctx.closePath();
+  painting = false;
+};
+
+function handleMove(evt) {
+  console.log(evt);
+  evt.preventDefault();
+  var touches = evt.changedTouches;
+  const x = touches[0].clientX - 240
+  const y = touches[0].clientY - 95
+  if (!painting) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  } else {
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+};
+
+
 handleCanvasClick = () => {
   if (filling) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -58,7 +95,7 @@ handleCM = e => {
 
 function setPredictUpload(){
   file = document.getElementById('imageUpload').files[0]
-}
+};
 
 function setPredictCanvas(){
   // predict can take in an image, video or canvas html element
@@ -69,7 +106,7 @@ function setPredictCanvas(){
       array.push(blobBin.charCodeAt(i));
   }
   file = new Blob([new Uint8Array(array)], {type: 'image/png'});	// Blob 생성
-}
+};
 
 
 async function predict() {
@@ -104,6 +141,10 @@ if (canvas) {
   canvas.addEventListener("mouseleave", stopPainting);
   canvas.addEventListener("click", handleCanvasClick);
   canvas.addEventListener("contextmenu", handleCM);
+
+  canvas.addEventListener("touchstart", handleStart);
+  canvas.addEventListener("touchmove", handleMove);
+  canvas.addEventListener("touchend", handleEnd);
 }
 
 changeColor = e => {
